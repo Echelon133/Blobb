@@ -718,6 +718,25 @@ public class BlobbControllerTests {
     }
 
     @Test
+    public void postBlobb_RejectsNullContent() throws Exception {
+        // json
+        String json = "{}";
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(
+                post("/api/blobbs")
+                        .accept(APPLICATION_JSON)
+                        .with(user(testUser))
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+        ).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).contains("Field 'content' must be provided");
+    }
+
+    @Test
     public void postBlobb_RejectsInvalidBlobbLength() throws Exception {
         BlobbDto dto1 = new BlobbDto();
         BlobbDto dto2 = new BlobbDto();
@@ -790,6 +809,27 @@ public class BlobbControllerTests {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.getContentAsString()).isEqualTo(expected.getJson());
+    }
+
+    @Test
+    public void respondToBlobb_RejectsNullContent() throws Exception {
+        UUID postUuid = UUID.randomUUID();
+
+        // json
+        String json = "{}";
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(
+                post("/api/blobbs/" + postUuid + "/respond")
+                        .accept(APPLICATION_JSON)
+                        .with(user(testUser))
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+        ).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).contains("Field 'content' must be provided");
     }
 
     @Test
@@ -891,6 +931,27 @@ public class BlobbControllerTests {
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
         assertThat(response.getContentAsString()).contains("Invalid UUID string");
+    }
+
+    @Test
+    public void reblobbOfBlobb_RejectsNullContent() throws Exception {
+        UUID postUuid = UUID.randomUUID();
+
+        // json
+        String json = "{}";
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(
+                post("/api/blobbs/" + postUuid + "/reblobb")
+                        .accept(APPLICATION_JSON)
+                        .with(user(testUser))
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+        ).andReturn().getResponse();
+
+        // then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.getContentAsString()).contains("Field 'content' must be provided");
     }
 
     @Test
